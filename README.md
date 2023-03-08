@@ -4,7 +4,7 @@
 *  `flyctl secrets set <key>=<value>` # check .example.env for env variables
 * `flyctl deploy`
 
-For github actions set environment variable `FLY_AUTH_TOKEN` which can be obtained from `flyctl auth token`
+For github actions set environment variable `FLY_API_TOKEN` which can be obtained from `flyctl auth token`
 
 # Hiatus, Unsupported Versions, Rate Limiting & Self Hosting
 
