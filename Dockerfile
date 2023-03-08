@@ -1,4 +1,4 @@
-FROM golang:latest
+FROM golang:latest AS build
 
 WORKDIR /go/src/app
 
@@ -14,9 +14,13 @@ COPY . .
 RUN mkdir -p ./data && \
   cp ./docs/build.sh ./
 
-ENV HOME=/
+RUN ./build.sh
 
-EXPOSE 2202
+FROM alpine:latest
+
+COPY --from=build /go/src/app/autodelete /
+
+ENV HOME=/
 
 ENV CLIENT_ID $CLIENT_ID
 ENV CLIENT_SECRET $CLIENT_SECRET
@@ -32,6 +36,4 @@ ENV DONOR_ROLE_IDS $DONOR_ROLE_IDS
 ENV BACKLOG_LIMIT $BACKLOG_LIMIT
 ENV DONOR_BACKLOG_LIMIT $DONOR_BACKLOG_LIMIT
 
-RUN ./build.sh
-
-ENTRYPOINT ./autodelete --nohttp
+ENTRYPOINT ["/autodelete", "--nohttp"]
