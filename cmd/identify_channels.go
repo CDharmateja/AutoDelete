@@ -3,13 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strconv"
 
 	"github.com/bwmarrin/discordgo"
 	autodelete "github.com/riking/AutoDelete"
-	"gopkg.in/yaml.v2"
 )
 
 var flagPrintMessages = flag.Bool("messages", false, "print recent messages")
@@ -20,12 +18,18 @@ func main() {
 
 	flag.Parse()
 
-	confBytes, err := ioutil.ReadFile("config.yml")
+	conf, err := autodelete.LoadConfigFromEnv()
 	if err != nil {
-		fmt.Println("Please copy config.yml.example to config.yml and fill out the values")
+		fmt.Println("error loading config from env:", err)
 		return
 	}
-	err = yaml.Unmarshal(confBytes, &conf)
+
+	// confBytes, err := ioutil.ReadFile("config.yml")
+	// if err != nil {
+	// 	fmt.Println("Please copy config.yml.example to config.yml and fill out the values")
+	// 	return
+	// }
+	// err = yaml.Unmarshal(confBytes, &conf)
 	if err != nil {
 		fmt.Println("yaml error:", err)
 		return

@@ -1,1 +1,1 @@
-(cd ~/go/src/github.com/riking/AutoDelete; git pull; go build -ldflags="-s -w" -v -o ~/go/bin/autodelete github.com/riking/AutoDelete/cmd/autodelete); cp ~/go/bin/autodelete ./autodelete
+(go build -ldflags="-s -w" -v -o /go/bin/autodelete /go/src/app/cmd/autodelete); cp /go/bin/autodelete ./autodelete

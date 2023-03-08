@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -76,6 +77,51 @@ type Config struct {
 	DonorBacklogLimit  int `yaml:"backlog_limit_donor"`
 }
 
+func LoadConfigFromEnv() (Config, error) {
+	var conf Config
+	var err error
+
+	conf.ClientID = os.Getenv("CLIENT_ID")
+	conf.ClientSecret = os.Getenv("CLIENT_SECRET")
+	conf.BotToken = os.Getenv("BOT_TOKEN")
+	conf.AdminUser = os.Getenv("ADMIN_USER")
+
+	if shardsStr := os.Getenv("SHARDS"); shardsStr != "" {
+		if conf.Shards, err = strconv.Atoi(shardsStr); err != nil {
+			return Config{}, err
+		}
+	}
+
+	conf.ErrorLogCh = os.Getenv("ERROR_LOG")
+
+	conf.HTTP.Listen = os.Getenv("HTTP_LISTEN")
+	conf.HTTP.Public = os.Getenv("HTTP_PUBLIC")
+
+	if statusMsg := os.Getenv("STATUS_MESSAGE"); statusMsg != "" {
+		conf.StatusMessage = &statusMsg
+	}
+
+	conf.DonorGuild = os.Getenv("DONOR_GUILD")
+
+	if donorRoleIDs := os.Getenv("DONOR_ROLE_IDS"); donorRoleIDs != "" {
+		conf.DonorRoleIDs = strings.Split(donorRoleIDs, ",")
+	}
+
+	if backlogLimit := os.Getenv("BACKLOG_LIMIT"); backlogLimit != "" {
+		if conf.BacklogLengthLimit, err = strconv.Atoi(backlogLimit); err != nil {
+			return Config{}, err
+		}
+	}
+
+	if donorBacklogLimit := os.Getenv("DONOR_BACKLOG_LIMIT"); donorBacklogLimit != "" {
+		if conf.DonorBacklogLimit, err = strconv.Atoi(donorBacklogLimit); err != nil {
+			return Config{}, err
+		}
+	}
+
+	return conf, nil
+}
+
 type BansFile struct {
 	Guilds []string `yaml:"guilds"`
 }
@@ -106,9 +152,12 @@ func internalMigrateConfig(c ManagedChannelMarshal) ManagedChannelMarshal {
 }
 
 func (b *Bot) ReportToLogChannel(msg string) {
-	_, err := b.s.ChannelMessageSend(b.Config.ErrorLogCh, msg)
-	if err != nil {
-		fmt.Println("error while reporting to error log:", err)
+	if b.Config.ErrorLogCh != "" {
+		fmt.Println("errorLog:", b.Config.ErrorLogCh)
+		_, err := b.s.ChannelMessageSend(b.Config.ErrorLogCh, msg)
+		if err != nil {
+			fmt.Println("error while reporting to error log:", err)
+		}
 	}
 	fmt.Println("[LOG]", msg)
 }

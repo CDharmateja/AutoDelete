@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"net/http/pprof"
 	rdebug "runtime/debug"
@@ -12,7 +11,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	autodelete "github.com/riking/AutoDelete"
-	"gopkg.in/yaml.v2"
 )
 
 var flagShardID = flag.Int("shard", -1, "shard ID of this bot")
@@ -25,16 +23,22 @@ func main() {
 
 	flag.Parse()
 
-	confBytes, err := ioutil.ReadFile("config.yml")
+	conf, err := autodelete.LoadConfigFromEnv()
 	if err != nil {
-		fmt.Println("Please copy config.yml.example to config.yml and fill out the values")
+		fmt.Println("error loading config from env:", err)
 		return
 	}
-	err = yaml.Unmarshal(confBytes, &conf)
-	if err != nil {
-		fmt.Println("yaml error:", err)
-		return
-	}
+
+	// confBytes, err := ioutil.ReadFile("config.yml")
+	// if err != nil {
+	// 	fmt.Println("Please copy config.yml.example to config.yml and fill out the values")
+	// 	return
+	// }
+	// err = yaml.Unmarshal(confBytes, &conf)
+	// if err != nil {
+	// 	fmt.Println("yaml error:", err)
+	// 	return
+	// }
 	if conf.BotToken == "" {
 		fmt.Println("bot token must be specified")
 	}
