@@ -1,6 +1,11 @@
-FROM golang:latest AS build
+FROM golang:latest AS builder
 
 WORKDIR /go/src/app
+
+ENV CGO_ENABLED=1
+# ENV GO111MODULE=on
+ENV GOOS=linux
+ENV GOARCH=amd64
 
 COPY go.mod ./
 COPY go.sum ./
@@ -18,7 +23,7 @@ RUN ./build.sh
 
 FROM alpine:latest
 
-COPY --from=build /go/src/app/autodelete /
+COPY --from=builder --chmod=0755 /go/src/app/autodelete /
 
 ENV HOME=/
 
