@@ -59,4 +59,6 @@ ENV DONOR_BACKLOG_LIMIT $DONOR_BACKLOG_LIMIT
 
 RUN mkdir -p /data
 
-ENTRYPOINT /autodelete --nohttp
+EXPOSE 2202
+
+ENTRYPOINT /autodelete
