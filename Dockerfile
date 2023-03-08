@@ -5,7 +5,8 @@ WORKDIR /go/src/app
 ENV CGO_ENABLED=1
 # ENV GO111MODULE=on
 ENV GOOS=linux
-ENV GOARCH=amd64
+# ENV GOARCH=amd64
+
 
 COPY go.mod ./
 COPY go.sum ./
@@ -19,13 +20,16 @@ COPY . .
 RUN mkdir -p ./data && \
   cp ./docs/build.sh ./
 
-RUN ./build.sh
+# ENV HOME=/
+
+# RUN ./build.sh
+
+RUN go build -ldflags="-s -w" -o /go/src/app/autodelete
 
 FROM alpine:latest
 
 COPY --from=builder --chmod=0755 /go/src/app/autodelete /
 
-ENV HOME=/
 
 ENV CLIENT_ID $CLIENT_ID
 ENV CLIENT_SECRET $CLIENT_SECRET
