@@ -1,3 +1,11 @@
+# Deploying with FLy.io
+
+* `flyctl volumes create data -s <size_in_gb>`
+*  `flyctl secrets set <key>=<value>` # check .example.env for env variables
+* `flyctl deploy`
+
+For github actions set environment variable `FLY_AUTH_TOKEN` which can be obtained from `flyctl auth token`
+
 # Hiatus, Unsupported Versions, Rate Limiting & Self Hosting
 
 The creator of this bot is on an extended break, with no ETA to return to this project.
